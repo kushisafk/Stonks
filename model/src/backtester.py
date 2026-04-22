@@ -107,6 +107,42 @@ def save_results(metrics: dict, ticker: str) -> None:
         
     pd.DataFrame([metrics]).to_csv(csv_path, index=False)
 
+def extract_trade_log(portfolio_df: pd.DataFrame) -> list[dict]:
+    """
+    Scan row by row and extract completed buy->sell trade pairs.
+    """
+    trade_log = []
+    buy_price = 0
+    entry_date = None
+    
+    for date, row in portfolio_df.iterrows():
+        if row['Signal'] == 'Buy' and buy_price == 0:
+            buy_price = row['Price']
+            if isinstance(date, pd.Timestamp):
+                entry_date = date.date().isoformat()
+            else:
+                entry_date = str(date)
+        elif row['Signal'] == 'Sell' and buy_price != 0:
+            exit_price = row['Price']
+            if isinstance(date, pd.Timestamp):
+                exit_date = date.date().isoformat()
+            else:
+                exit_date = str(date)
+            pnl = round(exit_price - buy_price, 2)
+            result = "Win" if pnl > 0 else "Loss"
+            
+            trade_log.append({
+                "entry_date": entry_date,
+                "exit_date": exit_date,
+                "entry_price": float(buy_price),
+                "exit_price": float(exit_price),
+                "pnl": pnl,
+                "result": result
+            })
+            buy_price = 0
+            
+    return trade_log
+
 def run_backtest(ticker: str, signal_df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     """
     Full backtest pipeline

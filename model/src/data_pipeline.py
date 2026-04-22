@@ -2,10 +2,11 @@
 Data Pipeline for the Stonks trading model.
 Fetches, preprocesses, and prepares feature data.
 """
+import joblib
 import pandas as pd
 import yfinance as yf
 from sklearn.preprocessing import MinMaxScaler
-from model.config.settings import DATA_RAW_DIR, DATA_PROCESSED_DIR
+from model.config.settings import DATA_RAW_DIR, DATA_PROCESSED_DIR, MODELS_DIR
 
 def fetch_data(ticker: str, start: str, end: str) -> pd.DataFrame:
     """
@@ -54,7 +55,7 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     df.dropna(inplace=True)
     return df
 
-def normalize(df: pd.DataFrame) -> pd.DataFrame:
+def normalize(df: pd.DataFrame, ticker: str) -> pd.DataFrame:
     """
     Applies MinMaxScaler on features.
     """
@@ -65,7 +66,18 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
     features = [f for f in features if f in df_norm.columns]
     scaler = MinMaxScaler()
     df_norm.loc[:, features] = scaler.fit_transform(df_norm[features])
+    
+    scaler_path = MODELS_DIR / f"{ticker}_scaler.pkl"
+    joblib.dump(scaler, scaler_path)
+    
     return df_norm
+
+def load_scaler(ticker: str) -> MinMaxScaler:
+    """
+    Loads completed MinMaxScaler for a ticker.
+    """
+    scaler_path = MODELS_DIR / f"{ticker}_scaler.pkl"
+    return joblib.load(scaler_path)
 
 def prepare_features(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     """
@@ -98,7 +110,7 @@ def run_data_pipeline(ticker: str, start: str, end: str) -> tuple[pd.DataFrame, 
     
     save_processed(df, ticker)
     
-    norm_df = normalize(df)
+    norm_df = normalize(df, ticker)
     X, y = prepare_features(norm_df)
     
     return df, X, y
