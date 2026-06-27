@@ -14,11 +14,13 @@ class RandomForestModel(BaseModel):
         self, 
         n_estimators: int = 100, 
         max_depth: Optional[int] = 10, 
+        min_samples_leaf: int = 2,
         random_state: int = 42
     ):
         self.model = RandomForestClassifier(
             n_estimators=n_estimators,
             max_depth=max_depth,
+            min_samples_leaf=min_samples_leaf,
             random_state=random_state,
             n_jobs=-1
         )

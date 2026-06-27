@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     # App Settings
     APP_ENV: str = Field(default="dev")
     LOG_LEVEL: str = Field(default="INFO")
+    MODEL: str = Field(default="random_forest")
     
     # Storage Directories (resolved relative to root if relative)
     LOG_DIR: Path = Field(default=Path("logs"))
@@ -85,13 +86,22 @@ class Settings(BaseSettings):
             
     @property
     def ensemble_weights(self) -> dict:
-        """Returns normalized model weights for the ensemble."""
+        """Returns normalized model weights for the ensemble, mapping configured model dynamically."""
+        active_model = self.MODEL.strip().lower()
+        # Support "random_forest" alias as "rf" for weight dictionary compatibility
+        primary_key = "rf" if active_model in ("random_forest", "rf") else active_model
+        
         raw_weights = {
-            "rf": self.RF_WEIGHT,
+            primary_key: self.RF_WEIGHT,
             "lstm": self.LSTM_WEIGHT,
             "transformer": self.TRANSFORMER_WEIGHT,
             "finbert": self.FINBERT_WEIGHT
         }
+        
+        # If the active model itself is one of the standard stubs (e.g. lstm), handle gracefully
+        if primary_key in raw_weights and primary_key != "rf":
+            pass # Keep primary_key weight
+            
         total = sum(raw_weights.values())
         if total == 0:
             # Fallback if all weights are zero to avoid division by zero

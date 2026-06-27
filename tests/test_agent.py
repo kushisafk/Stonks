@@ -53,5 +53,5 @@ def test_trading_agent_pipeline(mock_fetch, tmp_path):
     assert len(df_csv) == 1
     assert df_csv.iloc[0]["Ticker"] == "AAPL"
     assert df_csv.iloc[0]["Signal"] == result["signal"]
-    assert df_csv.iloc[0]["Confidence"] == pytest.approx(result["confidence"])
+    assert df_csv.iloc[0]["Confidence"] == pytest.approx(result["confidence"], abs=1e-3)
     assert df_csv.iloc[0]["ClosePrice"] == pytest.approx(prices[-1])

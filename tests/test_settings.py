@@ -30,7 +30,8 @@ def test_settings_custom_parameters(tmp_path):
         CACHE_DIR=tmp_path / "cache",
         FEATURE_STORE_DIR=tmp_path / "features",
         RF_WEIGHT=0.8,
-        LSTM_WEIGHT=0.2
+        LSTM_WEIGHT=0.2,
+        FINBERT_WEIGHT=0.0
     )
     
     assert custom_settings.APP_ENV == "testing"

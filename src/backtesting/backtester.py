@@ -74,33 +74,57 @@ class Backtester:
             if len(X_test) == 0:
                 break
                 
-            # Train a Random Forest model on this training window
-            rf_model = RandomForestModel(n_estimators=100, max_depth=8, random_state=42)
-            rf_model.train(X_train, y_train)
+            # Get the model class dynamically
+            from src.models.model_registry import get_model_class
             
-            # Predict using chosen model configuration
+            # Resolve model name. If "ensemble", we use settings.MODEL as the base model.
             model_name_lower = model_name.strip().lower()
-            if model_name_lower == "rf":
-                probs = rf_model.predict_proba(X_test)
-                preds = rf_model.predict(X_test)
-            elif model_name_lower in ("ensemble", "rf+finbert", "rf_finbert"):
+            if model_name_lower in ("ensemble", "rf+finbert", "rf_finbert"):
+                base_model_key = settings.MODEL.strip().lower()
+            else:
+                base_model_key = model_name_lower
+                
+            model_class = get_model_class(base_model_key)
+            
+            # Instantiate model with default parameters suitable for backtesting baseline
+            if base_model_key in ("rf", "random_forest"):
+                base_model = model_class(n_estimators=100, max_depth=8, random_state=42)
+            elif base_model_key == "extra_trees":
+                base_model = model_class(n_estimators=100, max_depth=8, min_samples_leaf=2, random_state=42)
+            elif base_model_key == "xgboost":
+                base_model = model_class(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42)
+            elif base_model_key == "lightgbm":
+                base_model = model_class(n_estimators=100, num_leaves=31, learning_rate=0.1, random_state=42)
+            elif base_model_key == "catboost":
+                base_model = model_class(iterations=100, depth=6, learning_rate=0.1, random_state=42)
+            elif base_model_key == "logistic_regression":
+                base_model = model_class(max_iter=1000, C=1.0, random_state=42)
+            else:
+                base_model = model_class()
+                
+            base_model.train(X_train, y_train)
+            
+            if model_name_lower in ("ensemble", "rf+finbert", "rf_finbert"):
                 from src.ensemble.weighted_voting import WeightedEnsemble
                 from src.models.finbert import FinBERTModel
                 
                 ensemble = WeightedEnsemble()
-                ensemble.register_model("rf", rf_model)
+                ensemble_key = "rf" if base_model_key in ("random_forest", "rf") else base_model_key
+                ensemble.register_model(ensemble_key, base_model)
                 
                 finbert_model = FinBERTModel()
                 ensemble.register_model("finbert", finbert_model)
                 
                 # Configure weights
-                ensemble.set_weight("rf", settings.RF_WEIGHT)
+                ensemble.set_weight(ensemble_key, settings.RF_WEIGHT)
                 ensemble.set_weight("finbert", settings.FINBERT_WEIGHT)
                 
                 probs = ensemble.predict_proba(X_test)
                 preds = ensemble.predict(X_test)
             else:
-                raise ValueError(f"Unsupported model_name for backtester: {model_name}")
+                # Base model prediction directly
+                probs = base_model.predict_proba(X_test)
+                preds = base_model.predict(X_test)
             
             all_probs.extend(probs)
             all_preds.extend(preds)

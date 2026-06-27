@@ -64,16 +64,45 @@ class RuleBasedExplainer(BaseExplainer):
             elif return_20d < -0.05:
                 reasons.append(f"Bearish 20-day trend with a {return_20d:.2%} drop")
                 
-        # 5. Analyze news sentiment
+        # 5. Analyze market regime
+        market_regime = features.get("market_regime")
+        if market_regime is not None:
+            if market_regime == 1.0:
+                reasons.append("broader market is in a bullish regime (SPY in strong uptrend)")
+            elif market_regime == -1.0:
+                reasons.append("broader market is in a bearish regime (SPY in downtrend)")
+            else:
+                reasons.append("broader market is consolidating sideways")
+
+        # 6. Analyze relative strength vs S&P 500 (SPY)
+        rel_strength_20d = features.get("relative_strength_20d")
+        if rel_strength_20d is not None:
+            if rel_strength_20d > 0.02:
+                reasons.append(f"outperforming SPY by {rel_strength_20d:.2%} over the last 20 days (strong relative strength)")
+            elif rel_strength_20d < -0.02:
+                reasons.append(f"underperforming SPY by {abs(rel_strength_20d):.2%} over the last 20 days (weak relative strength)")
+
+        # 7. Analyze volume intelligence
+        vol_ratio = features.get("volume_ratio")
+        abnormal_vol = features.get("abnormal_volume_flag")
+        if vol_ratio is not None:
+            if abnormal_vol == 1.0:
+                reasons.append(f"abnormal volume breakout detected ({vol_ratio:.2f}x the 20-day average), indicating institutional activity")
+            elif vol_ratio > 1.25:
+                reasons.append(f"above-average volume accumulation ({vol_ratio:.2f}x of 20-day SMA)")
+            elif vol_ratio < 0.75:
+                reasons.append(f"below-average trading volume ({vol_ratio:.2f}x of 20-day SMA)")
+
+        # 8. Analyze news sentiment
         sentiment_score = features.get("sentiment_score")
         article_count = features.get("article_count")
         if sentiment_score is not None and article_count is not None and article_count > 0.0:
             if sentiment_score > 0.15:
-                reasons.append(f"Recent news sentiment is strongly positive (score: {sentiment_score:.2f} across {int(article_count)} articles)")
+                reasons.append(f"recent news sentiment is strongly positive (score: {sentiment_score:.2f} across {int(article_count)} articles)")
             elif sentiment_score < -0.15:
-                reasons.append(f"Recent news sentiment is strongly negative (score: {sentiment_score:.2f} across {int(article_count)} articles)")
+                reasons.append(f"recent news sentiment is strongly negative (score: {sentiment_score:.2f} across {int(article_count)} articles)")
             else:
-                reasons.append(f"Recent news sentiment is neutral (score: {sentiment_score:.2f} across {int(article_count)} articles)")
+                reasons.append(f"recent news sentiment is neutral (score: {sentiment_score:.2f} across {int(article_count)} articles)")
                 
         reasons_str = ", ".join(reasons)
         explanation = f"{signal} signal generated with {confidence:.2%} confidence due to: {reasons_str}."

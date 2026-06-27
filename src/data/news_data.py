@@ -134,20 +134,43 @@ class YFinanceNewsCollector(NewsDataCollector):
                 
             standardized = []
             lookback_cutoff = datetime.now() - timedelta(days=days)
+            import pandas as pd
             
             for art in articles:
-                ts = art.get("providerPublishTime", time.time())
-                pub_date = datetime.fromtimestamp(ts)
+                # Handle nested content structure if present, otherwise fallback to legacy flat format
+                content = art.get("content", {})
+                if content:
+                    title = content.get("title", "")
+                    summary = content.get("summary", "") or content.get("description", "") or title
+                    source = content.get("provider", {}).get("displayName", "YFinance")
+                    
+                    pub_date_str = content.get("pubDate")
+                    if pub_date_str:
+                        pub_date = pd.to_datetime(pub_date_str)
+                        if pub_date.tzinfo is not None:
+                            pub_date = pub_date.tz_localize(None)
+                    else:
+                        pub_date = datetime.now()
+                else:
+                    title = art.get("title", "")
+                    summary = art.get("summary", "") or art.get("title", "")
+                    source = art.get("publisher", "YFinance")
+                    
+                    ts = art.get("providerPublishTime")
+                    if ts:
+                        pub_date = datetime.fromtimestamp(ts)
+                    else:
+                        pub_date = datetime.now()
                 
                 # Apply lookback filter
                 if pub_date < lookback_cutoff:
                     continue
                     
                 standardized.append({
-                    "headline": art.get("title", ""),
-                    "summary": art.get("summary", "") or art.get("title", ""),
+                    "headline": title,
+                    "summary": summary,
                     "published_at": pub_date.isoformat(),
-                    "source": art.get("publisher", "YFinance")
+                    "source": source
                 })
             logger.info(f"YFinance News: Successfully extracted {len(standardized)} articles for {symbol}.")
             return standardized[:settings.NEWS_MAX_ARTICLES]

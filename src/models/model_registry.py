@@ -1,14 +1,27 @@
+import json
 from typing import Dict, Type
 from src.models.base_model import BaseModel
 from src.models.lstm import LSTMModel
 from src.models.transformer import TransformerModel
 from src.models.finbert import FinBERTModel
+from src.models.extra_trees import ExtraTreesModel
+from src.models.xgboost import XGBoostModel
+from src.models.lightgbm import LightGBMModel
+from src.models.catboost import CatBoostModel
+from src.models.logistic_regression import LogisticRegressionModel
+from src.config.settings import settings
+from src.logging.logger import logger
 
-# Base registry dictionary containing Phase 1 stubs
+# Base registry dictionary mapping lowercase codes to model classes
 _REGISTRY: Dict[str, Type[BaseModel]] = {
     "lstm": LSTMModel,
     "transformer": TransformerModel,
-    "finbert": FinBERTModel
+    "finbert": FinBERTModel,
+    "xgboost": XGBoostModel,
+    "lightgbm": LightGBMModel,
+    "catboost": CatBoostModel,
+    "extra_trees": ExtraTreesModel,
+    "logistic_regression": LogisticRegressionModel
 }
 
 def register_model_class(name: str, cls: Type[BaseModel]) -> None:
@@ -28,15 +41,15 @@ def get_model_class(name: str) -> Type[BaseModel]:
     Dynamically loads RandomForestModel to prevent import circularity during early setup.
     
     Args:
-        name: Key name of the model ('rf', 'lstm', 'transformer', 'finbert')
+        name: Key name of the model
         
     Returns:
         Type[BaseModel]: The class constructor matching the key
     """
     clean_name = name.strip().lower()
     
-    # Handle lazy resolution of RandomForestModel
-    if clean_name == "rf":
+    # Handle lazy resolution of RandomForestModel to prevent circularity
+    if clean_name in ("rf", "random_forest"):
         try:
             from src.models.random_forest import RandomForestModel
             return RandomForestModel
@@ -46,7 +59,7 @@ def get_model_class(name: str) -> Type[BaseModel]:
             ) from e
             
     if clean_name not in _REGISTRY:
-        available = list(_REGISTRY.keys()) + ["rf"]
+        available = list(_REGISTRY.keys()) + ["rf", "random_forest"]
         raise KeyError(
             f"Model name '{name}' is not registered. Registered options: {available}"
         )
@@ -64,6 +77,40 @@ def list_registered_models() -> Dict[str, Type[BaseModel]]:
     try:
         from src.models.random_forest import RandomForestModel
         full_dict["rf"] = RandomForestModel
+        full_dict["random_forest"] = RandomForestModel
     except ImportError:
         pass
     return full_dict
+
+def get_best_model() -> Type[BaseModel]:
+    """
+    Reads the leaderboard.json file, parses the model name of rank 1,
+    and returns its registered model class wrapper from the registry.
+    Falls back to the configured settings.MODEL if no leaderboard is found.
+    
+    Returns:
+        Type[BaseModel]: The class constructor of the best-performing model.
+    """
+    leaderboard_path = settings.MODEL_DIR / "leaderboard.json"
+    if leaderboard_path.exists():
+        try:
+            with open(leaderboard_path, "r") as f:
+                data = json.load(f)
+            
+            best_name = None
+            if isinstance(data, list) and len(data) > 0:
+                best_name = data[0].get("model")
+            elif isinstance(data, dict) and "leaderboard" in data:
+                leaderboard = data["leaderboard"]
+                if len(leaderboard) > 0:
+                    best_name = leaderboard[0].get("model")
+                    
+            if best_name:
+                logger.info(f"Model Registry: Resolved best model '{best_name}' from leaderboard.")
+                return get_model_class(best_name)
+        except Exception as e:
+            logger.warning(f"Failed to read leaderboard.json, falling back to default: {e}")
+            
+    # Fallback to config MODEL parameter
+    logger.info(f"Model Registry: Falling back to configured MODEL '{settings.MODEL}'.")
+    return get_model_class(settings.MODEL)

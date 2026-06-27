@@ -118,3 +118,78 @@ def test_random_forest_model(tmp_path):
     # Test registry resolves RF correctly now that it's implemented
     rf_class_resolved = get_model_class("rf")
     assert rf_class_resolved == RandomForestModel
+
+
+def test_new_phase4_models(tmp_path):
+    """Verify that all Phase 4 model wrappers train, predict, save, load, and extract importances."""
+    from src.models.extra_trees import ExtraTreesModel
+    from src.models.xgboost import XGBoostModel
+    from src.models.lightgbm import LightGBMModel
+    from src.models.catboost import CatBoostModel
+    from src.models.logistic_regression import LogisticRegressionModel
+    
+    # Create simple dummy dataset
+    np.random.seed(42)
+    X = pd.DataFrame({
+        "feat1": np.random.randn(50),
+        "feat2": np.random.randn(50)
+    })
+    y = pd.Series((X["feat1"] + X["feat2"] > 0.0).astype(int))
+    
+    models_classes = [
+        ExtraTreesModel,
+        XGBoostModel,
+        LightGBMModel,
+        CatBoostModel,
+        LogisticRegressionModel
+    ]
+    
+    for cls in models_classes:
+        name = cls.__name__
+        model = cls()
+        assert not model.is_trained
+        
+        # Train
+        model.train(X, y)
+        assert model.is_trained
+        
+        # Predict
+        preds = model.predict(X)
+        probs = model.predict_proba(X)
+        
+        assert len(preds) == 50
+        assert len(probs) == 50
+        assert ((probs >= 0.0) & (probs <= 1.0)).all()
+        
+        # Feature importances (for tree-based models)
+        if cls != LogisticRegressionModel:
+            importances = model.feature_importances
+            assert "feat1" in importances
+            assert "feat2" in importances
+            assert sum(importances.values()) == pytest.approx(1.0, rel=1e-3)
+            
+        # Save & Load
+        model_file = tmp_path / f"{name}.joblib"
+        model.save(model_file)
+        assert model_file.exists()
+        
+        model_loaded = cls()
+        model_loaded.load(model_file)
+        assert model_loaded.is_trained
+        assert model_loaded._feature_names == ["feat1", "feat2"]
+        
+        # Predictions check
+        loaded_preds = model_loaded.predict(X)
+        assert (loaded_preds == preds).all()
+        
+        # Registry resolution check
+        registry_name = name.replace("Model", "").lower()
+        # Handle LogisticRegression suffix clean mapping
+        if registry_name == "logisticregression":
+            registry_name = "logistic_regression"
+        elif registry_name == "extratrees":
+            registry_name = "extra_trees"
+            
+        resolved_class = get_model_class(registry_name)
+        assert resolved_class == cls
+

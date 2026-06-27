@@ -26,11 +26,17 @@ def test_models_endpoint():
     rf_info = data["active_models"]["rf"]
     assert rf_info["is_active"] is True
     assert rf_info["status"] == "READY"
-    assert rf_info["weight"] == 1.0
+    assert rf_info["weight"] == 0.7
     
     lstm_info = data["active_models"]["lstm"]
     assert lstm_info["is_active"] is True
     assert lstm_info["status"] == "STUB"
+    assert lstm_info["weight"] == 0.0
+    
+    finbert_info = data["active_models"]["finbert"]
+    assert finbert_info["is_active"] is True
+    assert finbert_info["status"] == "STUB"
+    assert finbert_info["weight"] == 0.3
 
 @patch("src.api.app.trading_agent.run_pipeline")
 def test_predict_endpoint(mock_pipeline):

@@ -19,9 +19,12 @@ class TradingAgent:
         self.model_dir.mkdir(parents=True, exist_ok=True)
         self.explainer = RuleBasedExplainer()
         
-    def _get_model_path(self, symbol: str) -> Path:
+    def _get_model_path(self, symbol: str, model_name: str) -> Path:
         """Constructs a persistent model weight file path."""
-        return self.model_dir / f"{symbol.strip().upper()}_rf.joblib"
+        clean_name = model_name.strip().lower()
+        if clean_name == "random_forest":
+            clean_name = "rf"
+        return self.model_dir / f"{symbol.strip().upper()}_{clean_name}.joblib"
         
     def run_pipeline(self, symbol: str, force_train: bool = False) -> Dict[str, Any]:
         """
@@ -51,12 +54,17 @@ class TradingAgent:
         today_features = X_pred.iloc[-1].to_dict()
         X_today = X_pred.iloc[[-1]]  # Keep as dataframe of 1 row for models
         
-        model_path = self._get_model_path(symbol)
-        rf_model = RandomForestModel()
+        # Get active model constructor dynamically
+        from src.models.model_registry import get_model_class
+        active_model_name = settings.MODEL.strip().lower()
+        model_class = get_model_class(active_model_name)
+        active_model = model_class()
+        
+        model_path = self._get_model_path(symbol, active_model_name)
         
         # 3. Model Training or Loading
         if force_train or not model_path.exists():
-            logger.info(f"Model file not found or force_train=True. Initiating training for {symbol}...")
+            logger.info(f"Model file not found or force_train=True. Initiating training of {active_model_name} for {symbol}...")
             # Fetch training dataset (nan targets and last row trimmed)
             X_train, y_train = feature_pipeline.get_features(symbol, raw_df, is_training=True, use_store=False)
             
@@ -65,15 +73,16 @@ class TradingAgent:
                     f"TradingAgent: Insufficient training samples ({len(X_train)}) after NaNs to train model for {symbol}."
                 )
                 
-            rf_model.train(X_train, y_train)
-            rf_model.save(model_path)
+            active_model.train(X_train, y_train)
+            active_model.save(model_path)
         else:
-            logger.info(f"Loading trained RandomForest model for {symbol} from {model_path}...")
-            rf_model.load(model_path)
+            logger.info(f"Loading trained {active_model_name} model for {symbol} from {model_path}...")
+            active_model.load(model_path)
             
         # 4. Assemble Weighted Ensemble
         ensemble = WeightedEnsemble()
-        ensemble.register_model("rf", rf_model)
+        ensemble_key = "rf" if active_model_name in ("random_forest", "rf") else active_model_name
+        ensemble.register_model(ensemble_key, active_model)
         
         # Load and register pre-trained FinBERTModel wrapper
         from src.models.finbert import FinBERTModel
@@ -81,7 +90,7 @@ class TradingAgent:
         ensemble.register_model("finbert", finbert_model)
         
         # Set weights dynamically from settings configurations
-        ensemble.set_weight("rf", settings.RF_WEIGHT)
+        ensemble.set_weight(ensemble_key, settings.RF_WEIGHT)
         ensemble.set_weight("finbert", settings.FINBERT_WEIGHT)
         
         # 5. Predict class probability via ensemble

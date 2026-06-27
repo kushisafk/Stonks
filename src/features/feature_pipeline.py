@@ -78,22 +78,94 @@ class FeaturePipeline:
                 cached_features.index = pd.to_datetime(cached_features.index)
                 
                 # Check if raw data has the same length and end date as cached features
+                # and verify that the cached file has Phase 3 columns (e.g. 'spy_return_1d')
                 if (len(raw_df) == len(cached_features) and 
-                    raw_df.index[-1] == cached_features.index[-1]):
+                    raw_df.index[-1] == cached_features.index[-1] and
+                    "spy_return_1d" in cached_features.columns):
                     logger.info(f"Feature Store hit: Loading precomputed features for {symbol} from {store_path}")
                     df = cached_features
                 else:
-                    logger.info(f"Feature Store outdated for {symbol}: Recomputing features.")
+                    logger.info(f"Feature Store outdated or legacy for {symbol}: Recomputing features.")
             except Exception as e:
                 logger.warning(f"Error loading from Feature Store for {symbol}, recomputing: {e}")
                 
         if df is None:
             logger.info(f"Computing features for {symbol} (no active cache found).")
             df = self.compute_all_features(raw_df)
+            
+            # Step 1: SPY Ingestion and Alignment
+            try:
+                from src.data.market_data import market_data_service
+                logger.info(f"Phase 3 Features: Ingesting SPY benchmark context for {symbol}...")
+                
+                # Fetch SPY data matching ticker range
+                spy_df = market_data_service.fetch_data("SPY", period=settings.YFINANCE_PERIOD, interval=settings.YFINANCE_INTERVAL)
+                spy_df = spy_df.reindex(raw_df.index, method="ffill")
+                
+                # Calculate SPY base returns, rsi, macd, volatility
+                from src.features.technical import add_returns, add_rsi, add_macd, add_volatility
+                spy_df = add_returns(spy_df)
+                spy_df = add_rsi(spy_df)
+                spy_df = add_macd(spy_df)
+                spy_df = add_volatility(spy_df)
+                
+                spy_ma50 = spy_df["Close"].rolling(50).mean()
+                spy_ma100 = spy_df["Close"].rolling(100).mean()
+                
+                # Append SPY features
+                df["spy_return_1d"] = spy_df["daily_return"]
+                df["spy_return_5d"] = spy_df["return_5d"]
+                df["spy_return_20d"] = spy_df["return_20d"]
+                df["spy_rsi"] = spy_df["rsi"]
+                df["spy_macd"] = spy_df["macd"]
+                df["spy_volatility_20d"] = spy_df["volatility_20d"]
+                df["spy_trend_strength"] = (spy_df["Close"] - spy_ma50) / (spy_ma50 + 1e-9)
+                
+                # Step 2: Relative Strength Features
+                df["relative_strength_5d"] = df["return_5d"] - df["spy_return_5d"]
+                df["relative_strength_20d"] = df["return_20d"] - df["spy_return_20d"]
+                
+                stock_return_50d = df["Close"].pct_change(50)
+                spy_return_50d = spy_df["Close"].pct_change(50)
+                df["relative_strength_50d"] = stock_return_50d - spy_return_50d
+                df["relative_momentum_score"] = (df["relative_strength_5d"] + df["relative_strength_20d"] + df["relative_strength_50d"]) / 3.0
+                
+                # Step 3: Volume Intelligence
+                vol_sma_20 = df["Volume"].rolling(20).mean()
+                df["volume_sma_20"] = vol_sma_20
+                df["volume_ratio"] = df["Volume"] / (vol_sma_20 + 1e-9)
+                df["volume_momentum"] = df["Volume"].pct_change(5)
+                df["volume_trend"] = (df["Volume"] - vol_sma_20) / (vol_sma_20 + 1e-9)
+                df["abnormal_volume_flag"] = (df["volume_ratio"] > 2.0).astype(float)
+                
+                # Step 4: Market Regime Detection
+                regime = np.zeros(len(df))
+                bull_mask = (spy_df["Close"] > spy_ma50) & (spy_ma50 > spy_ma100)
+                bear_mask = (spy_df["Close"] < spy_ma50) & (spy_ma50 < spy_ma100)
+                
+                regime[bull_mask] = 1.0
+                regime[bear_mask] = -1.0
+                df["market_regime"] = regime
+                
+                # Ensure no NaNs in added cols to prevent row drop
+                added_cols = [
+                    "spy_return_1d", "spy_return_5d", "spy_return_20d", "spy_rsi", "spy_macd",
+                    "spy_volatility_20d", "spy_trend_strength", "relative_strength_5d",
+                    "relative_strength_20d", "relative_strength_50d", "relative_momentum_score",
+                    "volume_sma_20", "volume_ratio", "volume_momentum", "volume_trend",
+                    "abnormal_volume_flag", "market_regime"
+                ]
+                df[added_cols] = df[added_cols].fillna(0.0)
+                logger.info(f"Phase 3 Features computed successfully for {symbol}.")
+                
+            except Exception as e:
+                logger.error(f"Failed to calculate Phase 3 features for {symbol}: {e}")
+                raise e
+                
             if use_store:
                 try:
                     df.to_csv(store_path)
-                    logger.info(f"Saved computed features for {symbol} to Feature Store at {store_path}")
+                    logger.info(f"Saved computed Phase 3 features for {symbol} to Feature Store at {store_path}")
                 except Exception as e:
                     logger.error(f"Failed to write features to store: {e}")
                 
@@ -114,6 +186,14 @@ class FeaturePipeline:
             "sentiment_score", "positive_news_ratio", "negative_news_ratio",
             "neutral_news_ratio", "article_count", "average_sentiment",
             "weighted_sentiment", "recency_weighted_sentiment"
+        ]
+        
+        market_context_cols = [
+            "spy_return_1d", "spy_return_5d", "spy_return_20d", "spy_rsi", "spy_macd",
+            "spy_volatility_20d", "spy_trend_strength", "relative_strength_5d",
+            "relative_strength_20d", "relative_strength_50d", "relative_momentum_score",
+            "volume_sma_20", "volume_ratio", "volume_momentum", "volume_trend",
+            "abnormal_volume_flag", "market_regime"
         ]
         
         # Initialize sentiment columns with neutral/zero values
@@ -144,7 +224,7 @@ class FeaturePipeline:
             except Exception as e:
                 logger.error(f"Failed to integrate live news sentiment features for {symbol}: {e}")
                 
-        feature_cols = base_feature_cols + sentiment_cols
+        feature_cols = base_feature_cols + sentiment_cols + market_context_cols
         
         if is_training:
             # For training, drop any row with NaNs (including start rows without indicator histories
