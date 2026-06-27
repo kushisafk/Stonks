@@ -10,6 +10,7 @@ from src.models.random_forest import RandomForestModel
 from src.ensemble.weighted_voting import WeightedEnsemble
 from src.decision.decision_engine import decision_engine
 from src.ai_layer.explainer import RuleBasedExplainer
+from src.intelligence.recommendation_engine import RecommendationEngine
 
 class TradingAgent:
     """Coordinates the end-to-end trading process: data fetch, features, training/inference, signal generation, and logging."""
@@ -18,6 +19,7 @@ class TradingAgent:
         self.model_dir = model_dir or settings.MODEL_DIR
         self.model_dir.mkdir(parents=True, exist_ok=True)
         self.explainer = RuleBasedExplainer()
+        self.recommendation_engine = RecommendationEngine()
         
     def _get_model_path(self, symbol: str, model_name: str) -> Path:
         """Constructs a persistent model weight file path."""
@@ -119,6 +121,14 @@ class TradingAgent:
         
         logger.info(f"TradingAgent: Pipeline finished for {symbol} -> Signal: {signal} ({confidence:.2f})")
         
+        # 9. Generate Trading Intelligence Recommendation
+        recommendation_payload = self.recommendation_engine.generate_recommendation(
+            ticker=symbol,
+            probability=pred_prob,
+            signal=signal,
+            features=today_features
+        )
+        
         return {
             "symbol": symbol,
             "signal": signal,
@@ -126,7 +136,8 @@ class TradingAgent:
             "close_price": today_close,
             "explanation": explanation,
             "probabilities": individual_probs,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
+            "intelligence": recommendation_payload
         }
 
 # Global trading agent instance

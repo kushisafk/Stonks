@@ -48404,3 +48404,257 @@
 2026-06-27 15:25:45 [INFO] STONKS - Training LogisticRegressionModel: Samples=200, Features=42
 2026-06-27 15:25:45 [INFO] STONKS - LogisticRegressionModel training completed successfully.
 2026-06-27 15:25:45 [INFO] STONKS - LogisticRegressionModel serialized successfully to temp_size_logistic_regression.joblib
+2026-06-27 15:39:56 [INFO] STONKS - TradingAgent: Running pipeline for ticker AAPL...
+2026-06-27 15:39:56 [INFO] STONKS - Cache hit: Loading data for AAPL (2y, 1d) from E:\Projects\StonksV2\cache\AAPL_2y_1d.csv
+2026-06-27 15:39:56 [INFO] STONKS - Feature Store outdated or legacy for AAPL: Recomputing features.
+2026-06-27 15:39:56 [INFO] STONKS - Computing features for AAPL (no active cache found).
+2026-06-27 15:39:56 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for AAPL...
+2026-06-27 15:39:56 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:39:56 [INFO] STONKS - Phase 3 Features computed successfully for AAPL.
+2026-06-27 15:39:56 [INFO] STONKS - Saved computed Phase 3 features for AAPL to Feature Store at E:\Projects\StonksV2\feature_store\AAPL.csv
+2026-06-27 15:40:00 [INFO] STONKS - Live Prediction: Collecting and analyzing news for AAPL
+2026-06-27 15:40:00 [INFO] STONKS - News Cache hit: Loading news for AAPL from E:\Projects\StonksV2\cache\news\AAPL_2026-06-27.json
+2026-06-27 15:40:00 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:00 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for AAPL: {'sentiment_score': -0.6604206799529493, 'positive_news_ratio': 0.0, 'negative_news_ratio': 0.9, 'neutral_news_ratio': 0.1, 'article_count': 10.0, 'average_sentiment': -0.6604206799529493, 'weighted_sentiment': -0.7118544260786244, 'recency_weighted_sentiment': -0.6824145983715433}
+2026-06-27 15:40:00 [INFO] STONKS - Prepared prediction dataset for AAPL: Shape (452, 42)
+2026-06-27 15:40:01 [INFO] STONKS - Model file not found or force_train=True. Initiating training of catboost for AAPL...
+2026-06-27 15:40:01 [INFO] STONKS - Computing features for AAPL (no active cache found).
+2026-06-27 15:40:01 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for AAPL...
+2026-06-27 15:40:01 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:01 [INFO] STONKS - Phase 3 Features computed successfully for AAPL.
+2026-06-27 15:40:01 [INFO] STONKS - Prepared training dataset for AAPL: Shape (451, 42)
+2026-06-27 15:40:01 [INFO] STONKS - Training CatBoostModel: Samples=451, Features=42
+2026-06-27 15:40:02 [INFO] STONKS - CatBoostModel training completed successfully.
+2026-06-27 15:40:02 [INFO] STONKS - CatBoostModel serialized successfully to E:\Projects\StonksV2\models_data\AAPL_catboost.joblib
+2026-06-27 15:40:02 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:02 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:02 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:02 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:02 [INFO] STONKS - Decision Engine: Prob: 0.5382 -> Signal: HOLD
+2026-06-27 15:40:02 [INFO] STONKS - CSV log entry created: AAPL | HOLD | Conf: 0.54 | Close: 283.7800
+2026-06-27 15:40:02 [INFO] STONKS - TradingAgent: Pipeline finished for AAPL -> Signal: HOLD (0.54)
+2026-06-27 15:40:02 [INFO] STONKS - TradingAgent: Running pipeline for ticker MSFT...
+2026-06-27 15:40:02 [INFO] STONKS - Cache hit: Loading data for MSFT (2y, 1d) from E:\Projects\StonksV2\cache\MSFT_2y_1d.csv
+2026-06-27 15:40:02 [INFO] STONKS - Feature Store outdated or legacy for MSFT: Recomputing features.
+2026-06-27 15:40:02 [INFO] STONKS - Computing features for MSFT (no active cache found).
+2026-06-27 15:40:02 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for MSFT...
+2026-06-27 15:40:02 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:02 [INFO] STONKS - Phase 3 Features computed successfully for MSFT.
+2026-06-27 15:40:02 [INFO] STONKS - Saved computed Phase 3 features for MSFT to Feature Store at E:\Projects\StonksV2\feature_store\MSFT.csv
+2026-06-27 15:40:02 [INFO] STONKS - Live Prediction: Collecting and analyzing news for MSFT
+2026-06-27 15:40:02 [INFO] STONKS - News Cache hit: Loading news for MSFT from E:\Projects\StonksV2\cache\news\MSFT_2026-06-27.json
+2026-06-27 15:40:02 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:02 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for MSFT: {'sentiment_score': -0.29446164756082, 'positive_news_ratio': 0.2, 'negative_news_ratio': 0.5, 'neutral_news_ratio': 0.3, 'article_count': 10.0, 'average_sentiment': -0.29446164756082, 'weighted_sentiment': -0.3107306650024162, 'recency_weighted_sentiment': -0.24999379463169805}
+2026-06-27 15:40:02 [INFO] STONKS - Prepared prediction dataset for MSFT: Shape (452, 42)
+2026-06-27 15:40:02 [INFO] STONKS - Model file not found or force_train=True. Initiating training of catboost for MSFT...
+2026-06-27 15:40:02 [INFO] STONKS - Computing features for MSFT (no active cache found).
+2026-06-27 15:40:02 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for MSFT...
+2026-06-27 15:40:02 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:02 [INFO] STONKS - Phase 3 Features computed successfully for MSFT.
+2026-06-27 15:40:02 [INFO] STONKS - Prepared training dataset for MSFT: Shape (451, 42)
+2026-06-27 15:40:02 [INFO] STONKS - Training CatBoostModel: Samples=451, Features=42
+2026-06-27 15:40:02 [INFO] STONKS - CatBoostModel training completed successfully.
+2026-06-27 15:40:02 [INFO] STONKS - CatBoostModel serialized successfully to E:\Projects\StonksV2\models_data\MSFT_catboost.joblib
+2026-06-27 15:40:02 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:02 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:02 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:02 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:02 [INFO] STONKS - Decision Engine: Prob: 0.4488 -> Signal: HOLD
+2026-06-27 15:40:02 [INFO] STONKS - CSV log entry created: MSFT | HOLD | Conf: 0.45 | Close: 372.9700
+2026-06-27 15:40:02 [INFO] STONKS - TradingAgent: Pipeline finished for MSFT -> Signal: HOLD (0.45)
+2026-06-27 15:40:02 [INFO] STONKS - TradingAgent: Running pipeline for ticker GOOGL...
+2026-06-27 15:40:02 [INFO] STONKS - Cache hit: Loading data for GOOGL (2y, 1d) from E:\Projects\StonksV2\cache\GOOGL_2y_1d.csv
+2026-06-27 15:40:02 [INFO] STONKS - Feature Store outdated or legacy for GOOGL: Recomputing features.
+2026-06-27 15:40:02 [INFO] STONKS - Computing features for GOOGL (no active cache found).
+2026-06-27 15:40:02 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for GOOGL...
+2026-06-27 15:40:02 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:02 [INFO] STONKS - Phase 3 Features computed successfully for GOOGL.
+2026-06-27 15:40:02 [INFO] STONKS - Saved computed Phase 3 features for GOOGL to Feature Store at E:\Projects\StonksV2\feature_store\GOOGL.csv
+2026-06-27 15:40:02 [INFO] STONKS - Live Prediction: Collecting and analyzing news for GOOGL
+2026-06-27 15:40:02 [INFO] STONKS - YFinance News: Extracting news for GOOGL...
+2026-06-27 15:40:03 [INFO] STONKS - YFinance News: Successfully extracted 10 articles for GOOGL.
+2026-06-27 15:40:03 [INFO] STONKS - News Cache created for GOOGL at E:\Projects\StonksV2\cache\news\GOOGL_2026-06-27.json
+2026-06-27 15:40:03 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:03 [INFO] STONKS - FinBERT: Lazily loading 'ProsusAI/finbert' tokenizer and classification model on CPU...
+2026-06-27 15:40:07 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/ProsusAI/finbert/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-06-27 15:40:07 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/ProsusAI/finbert/4556d13015211d73dccd3fdd39d39232506f3e43/config.json "HTTP/1.1 200 OK"
+2026-06-27 15:40:08 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/ProsusAI/finbert/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-06-27 15:40:08 [WARNING] huggingface_hub.utils._http - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-06-27 15:40:08 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/ProsusAI/finbert/4556d13015211d73dccd3fdd39d39232506f3e43/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-06-27 15:40:08 [INFO] httpx - HTTP Request: GET https://huggingface.co/api/models/ProsusAI/finbert/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-06-27 15:40:08 [INFO] httpx - HTTP Request: GET https://huggingface.co/api/models/ProsusAI/finbert/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-06-27 15:40:09 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/ProsusAI/finbert/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-06-27 15:40:09 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/ProsusAI/finbert/4556d13015211d73dccd3fdd39d39232506f3e43/config.json "HTTP/1.1 200 OK"
+2026-06-27 15:40:10 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/ProsusAI/finbert/resolve/main/model.safetensors "HTTP/1.1 404 Not Found"
+2026-06-27 15:40:10 [INFO] STONKS - FinBERT: Successfully loaded ProsusAI/finbert model.
+2026-06-27 15:40:10 [INFO] httpx - HTTP Request: GET https://huggingface.co/api/models/ProsusAI/finbert "HTTP/1.1 200 OK"
+2026-06-27 15:40:11 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for GOOGL: {'sentiment_score': 0.23419648185372352, 'positive_news_ratio': 0.4, 'negative_news_ratio': 0.2, 'neutral_news_ratio': 0.4, 'article_count': 10.0, 'average_sentiment': 0.23419648185372352, 'weighted_sentiment': 0.2243247161604392, 'recency_weighted_sentiment': 0.25064371093048216}
+2026-06-27 15:40:11 [INFO] STONKS - Prepared prediction dataset for GOOGL: Shape (452, 42)
+2026-06-27 15:40:11 [INFO] STONKS - Model file not found or force_train=True. Initiating training of catboost for GOOGL...
+2026-06-27 15:40:11 [INFO] STONKS - Computing features for GOOGL (no active cache found).
+2026-06-27 15:40:11 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for GOOGL...
+2026-06-27 15:40:11 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:11 [INFO] STONKS - Phase 3 Features computed successfully for GOOGL.
+2026-06-27 15:40:11 [INFO] STONKS - Prepared training dataset for GOOGL: Shape (451, 42)
+2026-06-27 15:40:11 [INFO] STONKS - Training CatBoostModel: Samples=451, Features=42
+2026-06-27 15:40:11 [INFO] STONKS - CatBoostModel training completed successfully.
+2026-06-27 15:40:11 [INFO] STONKS - CatBoostModel serialized successfully to E:\Projects\StonksV2\models_data\GOOGL_catboost.joblib
+2026-06-27 15:40:11 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:11 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:11 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:11 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:11 [INFO] STONKS - Decision Engine: Prob: 0.3246 -> Signal: SELL
+2026-06-27 15:40:11 [INFO] STONKS - CSV log entry created: GOOGL | SELL | Conf: 0.32 | Close: 337.3900
+2026-06-27 15:40:11 [INFO] STONKS - TradingAgent: Pipeline finished for GOOGL -> Signal: SELL (0.32)
+2026-06-27 15:40:11 [INFO] STONKS - TradingAgent: Running pipeline for ticker TSLA...
+2026-06-27 15:40:11 [INFO] STONKS - Cache hit: Loading data for TSLA (2y, 1d) from E:\Projects\StonksV2\cache\TSLA_2y_1d.csv
+2026-06-27 15:40:11 [INFO] STONKS - Feature Store outdated or legacy for TSLA: Recomputing features.
+2026-06-27 15:40:11 [INFO] STONKS - Computing features for TSLA (no active cache found).
+2026-06-27 15:40:11 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for TSLA...
+2026-06-27 15:40:11 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:11 [INFO] STONKS - Phase 3 Features computed successfully for TSLA.
+2026-06-27 15:40:11 [INFO] STONKS - Saved computed Phase 3 features for TSLA to Feature Store at E:\Projects\StonksV2\feature_store\TSLA.csv
+2026-06-27 15:40:11 [INFO] STONKS - Live Prediction: Collecting and analyzing news for TSLA
+2026-06-27 15:40:11 [INFO] STONKS - YFinance News: Extracting news for TSLA...
+2026-06-27 15:40:11 [INFO] httpx - HTTP Request: GET https://huggingface.co/api/models/ProsusAI/finbert/commits/main "HTTP/1.1 200 OK"
+2026-06-27 15:40:11 [INFO] STONKS - YFinance News: Successfully extracted 10 articles for TSLA.
+2026-06-27 15:40:11 [INFO] STONKS - News Cache created for TSLA at E:\Projects\StonksV2\cache\news\TSLA_2026-06-27.json
+2026-06-27 15:40:11 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:12 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for TSLA: {'sentiment_score': 0.12008613422513008, 'positive_news_ratio': 0.2, 'negative_news_ratio': 0.1, 'neutral_news_ratio': 0.7, 'article_count': 10.0, 'average_sentiment': 0.12008613422513008, 'weighted_sentiment': 0.13626263762292087, 'recency_weighted_sentiment': 0.1184646633159068}
+2026-06-27 15:40:12 [INFO] STONKS - Prepared prediction dataset for TSLA: Shape (452, 42)
+2026-06-27 15:40:12 [INFO] STONKS - Model file not found or force_train=True. Initiating training of catboost for TSLA...
+2026-06-27 15:40:12 [INFO] STONKS - Computing features for TSLA (no active cache found).
+2026-06-27 15:40:12 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for TSLA...
+2026-06-27 15:40:12 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:12 [INFO] STONKS - Phase 3 Features computed successfully for TSLA.
+2026-06-27 15:40:12 [INFO] STONKS - Prepared training dataset for TSLA: Shape (451, 42)
+2026-06-27 15:40:12 [INFO] STONKS - Training CatBoostModel: Samples=451, Features=42
+2026-06-27 15:40:12 [INFO] httpx - HTTP Request: GET https://huggingface.co/api/models/ProsusAI/finbert/discussions?p=0 "HTTP/1.1 200 OK"
+2026-06-27 15:40:12 [INFO] STONKS - CatBoostModel training completed successfully.
+2026-06-27 15:40:12 [INFO] STONKS - CatBoostModel serialized successfully to E:\Projects\StonksV2\models_data\TSLA_catboost.joblib
+2026-06-27 15:40:12 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:12 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:12 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:12 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:12 [INFO] STONKS - Decision Engine: Prob: 0.5150 -> Signal: HOLD
+2026-06-27 15:40:12 [INFO] STONKS - CSV log entry created: TSLA | HOLD | Conf: 0.52 | Close: 379.7100
+2026-06-27 15:40:12 [INFO] STONKS - TradingAgent: Pipeline finished for TSLA -> Signal: HOLD (0.52)
+2026-06-27 15:40:12 [INFO] STONKS - TradingAgent: Running pipeline for ticker NVDA...
+2026-06-27 15:40:12 [INFO] STONKS - Cache hit: Loading data for NVDA (2y, 1d) from E:\Projects\StonksV2\cache\NVDA_2y_1d.csv
+2026-06-27 15:40:12 [INFO] httpx - HTTP Request: GET https://huggingface.co/api/models/ProsusAI/finbert/commits/refs%2Fpr%2F29 "HTTP/1.1 200 OK"
+2026-06-27 15:40:12 [INFO] STONKS - Feature Store outdated or legacy for NVDA: Recomputing features.
+2026-06-27 15:40:12 [INFO] STONKS - Computing features for NVDA (no active cache found).
+2026-06-27 15:40:12 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for NVDA...
+2026-06-27 15:40:12 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:12 [INFO] STONKS - Phase 3 Features computed successfully for NVDA.
+2026-06-27 15:40:12 [INFO] STONKS - Saved computed Phase 3 features for NVDA to Feature Store at E:\Projects\StonksV2\feature_store\NVDA.csv
+2026-06-27 15:40:12 [INFO] STONKS - Live Prediction: Collecting and analyzing news for NVDA
+2026-06-27 15:40:12 [INFO] STONKS - YFinance News: Extracting news for NVDA...
+2026-06-27 15:40:13 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/ProsusAI/finbert/resolve/refs%2Fpr%2F29/model.safetensors.index.json "HTTP/1.1 404 Not Found"
+2026-06-27 15:40:13 [INFO] STONKS - YFinance News: Successfully extracted 10 articles for NVDA.
+2026-06-27 15:40:13 [INFO] STONKS - News Cache created for NVDA at E:\Projects\StonksV2\cache\news\NVDA_2026-06-27.json
+2026-06-27 15:40:13 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:13 [INFO] httpx - HTTP Request: HEAD https://huggingface.co/ProsusAI/finbert/resolve/refs%2Fpr%2F29/model.safetensors "HTTP/1.1 302 Found"
+2026-06-27 15:40:13 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for NVDA: {'sentiment_score': 0.1054106179624796, 'positive_news_ratio': 0.3, 'negative_news_ratio': 0.2, 'neutral_news_ratio': 0.5, 'article_count': 10.0, 'average_sentiment': 0.1054106179624796, 'weighted_sentiment': 0.10569901591799422, 'recency_weighted_sentiment': 0.14738300439792387}
+2026-06-27 15:40:13 [INFO] STONKS - Prepared prediction dataset for NVDA: Shape (452, 42)
+2026-06-27 15:40:13 [INFO] STONKS - Model file not found or force_train=True. Initiating training of catboost for NVDA...
+2026-06-27 15:40:13 [INFO] STONKS - Computing features for NVDA (no active cache found).
+2026-06-27 15:40:13 [INFO] STONKS - Phase 3 Features: Ingesting SPY benchmark context for NVDA...
+2026-06-27 15:40:13 [INFO] STONKS - Cache hit: Loading data for SPY (2y, 1d) from E:\Projects\StonksV2\cache\SPY_2y_1d.csv
+2026-06-27 15:40:13 [INFO] STONKS - Phase 3 Features computed successfully for NVDA.
+2026-06-27 15:40:13 [INFO] STONKS - Prepared training dataset for NVDA: Shape (451, 42)
+2026-06-27 15:40:13 [INFO] STONKS - Training CatBoostModel: Samples=451, Features=42
+2026-06-27 15:40:14 [INFO] STONKS - CatBoostModel training completed successfully.
+2026-06-27 15:40:14 [INFO] STONKS - CatBoostModel serialized successfully to E:\Projects\StonksV2\models_data\NVDA_catboost.joblib
+2026-06-27 15:40:14 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:14 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:14 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:14 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:14 [INFO] STONKS - Decision Engine: Prob: 0.6618 -> Signal: BUY
+2026-06-27 15:40:14 [INFO] STONKS - CSV log entry created: NVDA | BUY | Conf: 0.66 | Close: 192.5300
+2026-06-27 15:40:14 [INFO] STONKS - TradingAgent: Pipeline finished for NVDA -> Signal: BUY (0.66)
+2026-06-27 15:40:28 [INFO] STONKS - TradingAgent: Running pipeline for ticker AAPL...
+2026-06-27 15:40:28 [INFO] STONKS - Cache hit: Loading data for AAPL (2y, 1d) from E:\Projects\StonksV2\cache\AAPL_2y_1d.csv
+2026-06-27 15:40:29 [INFO] STONKS - Feature Store hit: Loading precomputed features for AAPL from E:\Projects\StonksV2\feature_store\AAPL.csv
+2026-06-27 15:40:33 [INFO] STONKS - Live Prediction: Collecting and analyzing news for AAPL
+2026-06-27 15:40:33 [INFO] STONKS - News Cache hit: Loading news for AAPL from E:\Projects\StonksV2\cache\news\AAPL_2026-06-27.json
+2026-06-27 15:40:33 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:33 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for AAPL: {'sentiment_score': -0.6604206799529493, 'positive_news_ratio': 0.0, 'negative_news_ratio': 0.9, 'neutral_news_ratio': 0.1, 'article_count': 10.0, 'average_sentiment': -0.6604206799529493, 'weighted_sentiment': -0.7118544260786244, 'recency_weighted_sentiment': -0.6824145983715432}
+2026-06-27 15:40:33 [INFO] STONKS - Prepared prediction dataset for AAPL: Shape (452, 42)
+2026-06-27 15:40:34 [INFO] STONKS - Loading trained catboost model for AAPL from E:\Projects\StonksV2\models_data\AAPL_catboost.joblib...
+2026-06-27 15:40:34 [INFO] STONKS - CatBoostModel deserialized successfully from E:\Projects\StonksV2\models_data\AAPL_catboost.joblib
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:34 [INFO] STONKS - Decision Engine: Prob: 0.5382 -> Signal: HOLD
+2026-06-27 15:40:34 [INFO] STONKS - CSV log entry created: AAPL | HOLD | Conf: 0.54 | Close: 283.7800
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Pipeline finished for AAPL -> Signal: HOLD (0.54)
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Running pipeline for ticker MSFT...
+2026-06-27 15:40:34 [INFO] STONKS - Cache hit: Loading data for MSFT (2y, 1d) from E:\Projects\StonksV2\cache\MSFT_2y_1d.csv
+2026-06-27 15:40:34 [INFO] STONKS - Feature Store hit: Loading precomputed features for MSFT from E:\Projects\StonksV2\feature_store\MSFT.csv
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Collecting and analyzing news for MSFT
+2026-06-27 15:40:34 [INFO] STONKS - News Cache hit: Loading news for MSFT from E:\Projects\StonksV2\cache\news\MSFT_2026-06-27.json
+2026-06-27 15:40:34 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for MSFT: {'sentiment_score': -0.29446164756082, 'positive_news_ratio': 0.2, 'negative_news_ratio': 0.5, 'neutral_news_ratio': 0.3, 'article_count': 10.0, 'average_sentiment': -0.29446164756082, 'weighted_sentiment': -0.3107306650024162, 'recency_weighted_sentiment': -0.24999379463169807}
+2026-06-27 15:40:34 [INFO] STONKS - Prepared prediction dataset for MSFT: Shape (452, 42)
+2026-06-27 15:40:34 [INFO] STONKS - Loading trained catboost model for MSFT from E:\Projects\StonksV2\models_data\MSFT_catboost.joblib...
+2026-06-27 15:40:34 [INFO] STONKS - CatBoostModel deserialized successfully from E:\Projects\StonksV2\models_data\MSFT_catboost.joblib
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:34 [INFO] STONKS - Decision Engine: Prob: 0.4488 -> Signal: HOLD
+2026-06-27 15:40:34 [INFO] STONKS - CSV log entry created: MSFT | HOLD | Conf: 0.45 | Close: 372.9700
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Pipeline finished for MSFT -> Signal: HOLD (0.45)
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Running pipeline for ticker GOOGL...
+2026-06-27 15:40:34 [INFO] STONKS - Cache hit: Loading data for GOOGL (2y, 1d) from E:\Projects\StonksV2\cache\GOOGL_2y_1d.csv
+2026-06-27 15:40:34 [INFO] STONKS - Feature Store hit: Loading precomputed features for GOOGL from E:\Projects\StonksV2\feature_store\GOOGL.csv
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Collecting and analyzing news for GOOGL
+2026-06-27 15:40:34 [INFO] STONKS - News Cache hit: Loading news for GOOGL from E:\Projects\StonksV2\cache\news\GOOGL_2026-06-27.json
+2026-06-27 15:40:34 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for GOOGL: {'sentiment_score': 0.23419648185372352, 'positive_news_ratio': 0.4, 'negative_news_ratio': 0.2, 'neutral_news_ratio': 0.4, 'article_count': 10.0, 'average_sentiment': 0.23419648185372352, 'weighted_sentiment': 0.2243247161604392, 'recency_weighted_sentiment': 0.25064371093048216}
+2026-06-27 15:40:34 [INFO] STONKS - Prepared prediction dataset for GOOGL: Shape (452, 42)
+2026-06-27 15:40:34 [INFO] STONKS - Loading trained catboost model for GOOGL from E:\Projects\StonksV2\models_data\GOOGL_catboost.joblib...
+2026-06-27 15:40:34 [INFO] STONKS - CatBoostModel deserialized successfully from E:\Projects\StonksV2\models_data\GOOGL_catboost.joblib
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:34 [INFO] STONKS - Decision Engine: Prob: 0.3246 -> Signal: SELL
+2026-06-27 15:40:34 [INFO] STONKS - CSV log entry created: GOOGL | SELL | Conf: 0.32 | Close: 337.3900
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Pipeline finished for GOOGL -> Signal: SELL (0.32)
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Running pipeline for ticker TSLA...
+2026-06-27 15:40:34 [INFO] STONKS - Cache hit: Loading data for TSLA (2y, 1d) from E:\Projects\StonksV2\cache\TSLA_2y_1d.csv
+2026-06-27 15:40:34 [INFO] STONKS - Feature Store hit: Loading precomputed features for TSLA from E:\Projects\StonksV2\feature_store\TSLA.csv
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Collecting and analyzing news for TSLA
+2026-06-27 15:40:34 [INFO] STONKS - News Cache hit: Loading news for TSLA from E:\Projects\StonksV2\cache\news\TSLA_2026-06-27.json
+2026-06-27 15:40:34 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for TSLA: {'sentiment_score': 0.12008613422513008, 'positive_news_ratio': 0.2, 'negative_news_ratio': 0.1, 'neutral_news_ratio': 0.7, 'article_count': 10.0, 'average_sentiment': 0.12008613422513008, 'weighted_sentiment': 0.13626263762292087, 'recency_weighted_sentiment': 0.11846466331590681}
+2026-06-27 15:40:34 [INFO] STONKS - Prepared prediction dataset for TSLA: Shape (452, 42)
+2026-06-27 15:40:34 [INFO] STONKS - Loading trained catboost model for TSLA from E:\Projects\StonksV2\models_data\TSLA_catboost.joblib...
+2026-06-27 15:40:34 [INFO] STONKS - CatBoostModel deserialized successfully from E:\Projects\StonksV2\models_data\TSLA_catboost.joblib
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:34 [INFO] STONKS - Decision Engine: Prob: 0.5150 -> Signal: HOLD
+2026-06-27 15:40:34 [INFO] STONKS - CSV log entry created: TSLA | HOLD | Conf: 0.52 | Close: 379.7100
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Pipeline finished for TSLA -> Signal: HOLD (0.52)
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Running pipeline for ticker NVDA...
+2026-06-27 15:40:34 [INFO] STONKS - Cache hit: Loading data for NVDA (2y, 1d) from E:\Projects\StonksV2\cache\NVDA_2y_1d.csv
+2026-06-27 15:40:34 [INFO] STONKS - Feature Store hit: Loading precomputed features for NVDA from E:\Projects\StonksV2\feature_store\NVDA.csv
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Collecting and analyzing news for NVDA
+2026-06-27 15:40:34 [INFO] STONKS - News Cache hit: Loading news for NVDA from E:\Projects\StonksV2\cache\news\NVDA_2026-06-27.json
+2026-06-27 15:40:34 [INFO] STONKS - FinBERT: Batch analyzing 10 articles...
+2026-06-27 15:40:34 [INFO] STONKS - Live Prediction: Successfully merged news sentiment features for NVDA: {'sentiment_score': 0.1054106179624796, 'positive_news_ratio': 0.3, 'negative_news_ratio': 0.2, 'neutral_news_ratio': 0.5, 'article_count': 10.0, 'average_sentiment': 0.1054106179624796, 'weighted_sentiment': 0.10569901591799422, 'recency_weighted_sentiment': 0.14738300439792384}
+2026-06-27 15:40:34 [INFO] STONKS - Prepared prediction dataset for NVDA: Shape (452, 42)
+2026-06-27 15:40:34 [INFO] STONKS - Loading trained catboost model for NVDA from E:\Projects\StonksV2\models_data\NVDA_catboost.joblib...
+2026-06-27 15:40:34 [INFO] STONKS - CatBoostModel deserialized successfully from E:\Projects\StonksV2\models_data\NVDA_catboost.joblib
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'catboost' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Registered model 'finbert' in WeightedEnsemble.
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'catboost' to 0.7000
+2026-06-27 15:40:34 [INFO] STONKS - Set ensemble weight for 'finbert' to 0.3000
+2026-06-27 15:40:34 [INFO] STONKS - Decision Engine: Prob: 0.6618 -> Signal: BUY
+2026-06-27 15:40:34 [INFO] STONKS - CSV log entry created: NVDA | BUY | Conf: 0.66 | Close: 192.5300
+2026-06-27 15:40:34 [INFO] STONKS - TradingAgent: Pipeline finished for NVDA -> Signal: BUY (0.66)
