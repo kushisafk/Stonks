@@ -21,6 +21,8 @@ from src.terminal.commands.profile import ProfileCommands
 from src.terminal.commands.session import SessionCommands
 from src.terminal.commands.alerts import AlertCommands
 from src.terminal.commands.system import SystemCommands
+from src.terminal.commands.runtime_cmd import RuntimeCommands
+from src.runtime.runtime import StonksRuntime
 
 class TerminalShell:
     """Orchestrates the REPL shell loop, manages command history, and routes user inputs to subcommands."""
@@ -28,6 +30,9 @@ class TerminalShell:
     def __init__(self, manager):
         self.manager = manager
         self.parser = CommandParser()
+        
+        # Instantiate continuous background runtime
+        self.runtime = StonksRuntime(manager)
         self.completer = TerminalCompleter(manager)
         
         # Instantiate namespace command handlers
@@ -40,6 +45,7 @@ class TerminalShell:
         self.session_cmd = SessionCommands(manager)
         self.alerts_cmd = AlertCommands(manager)
         self.system_cmd = SystemCommands(manager)
+        self.runtime_cmd = RuntimeCommands(manager, self.runtime)
         
         # History setup
         self.history_file = Path(".stonks_history").resolve()
@@ -96,6 +102,8 @@ class TerminalShell:
                 # Handle Exit commands directly
                 if cmd in ("exit", "quit"):
                     print("Exiting STONKS terminal. Auto-saving active session...")
+                    if self.runtime.state.is_active:
+                        self.runtime.stop()
                     self.manager.save_session()
                     self.save_history()
                     break
@@ -117,6 +125,8 @@ class TerminalShell:
                     self.session_cmd.execute(args)
                 elif cmd == "alerts":
                     self.alerts_cmd.execute(args)
+                elif cmd == "runtime":
+                    self.runtime_cmd.execute(args)
                 elif cmd in ("help", "version", "clear"):
                     self.system_cmd.execute(cmd, args)
                 else:
@@ -134,6 +144,8 @@ class TerminalShell:
             except EOFError:
                 # Handle Ctrl+D gracefully
                 print("\nExiting STONKS terminal. Auto-saving active session...")
+                if self.runtime.state.is_active:
+                    self.runtime.stop()
                 self.manager.save_session()
                 self.save_history()
                 break

@@ -21,7 +21,8 @@ class TerminalCompleter:
             "research": ["benchmark", "thresholds", "features", "models", "importance", "history"],
             "session": ["status", "save", "reload", "reset"],
             "profile": ["show", "edit", "risk", "capital", "preferences"],
-            "alerts": ["list", "clear", "acknowledge"]
+            "alerts": ["list", "clear", "acknowledge"],
+            "runtime": ["start", "stop", "restart", "status", "metrics", "jobs", "events", "heartbeat", "config"]
         }
         self.namespaces = list(self.tree.keys()) + ["help", "version", "clear", "exit", "quit"]
         

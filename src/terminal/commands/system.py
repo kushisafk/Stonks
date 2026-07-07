@@ -24,6 +24,7 @@ class SystemCommands:
                 "  profile    - Show/Edit trading preferences and risk thresholds.",
                 "  session    - Status check, save, reload, or reset session configurations.",
                 "  alerts     - Query trigger history or acknowledge stop loss triggers.",
+                "  runtime    - Command background orchestrator threads.",
                 "",
                 "System:",
                 "  help       - Display help (or 'help <namespace>' for subcommand syntax).",
@@ -99,6 +100,18 @@ class SystemCommands:
                 "  alerts list                 - Table showing logged triggers history.",
                 "  alerts clear                - Delete alert logging records.",
                 "  alerts acknowledge          - Mark active alerts as acknowledged."
+            ],
+            "runtime": [
+                "Runtime Command Namespace Subcommands:",
+                "  runtime start               - Start background scheduler and workers.",
+                "  runtime stop                - Stop background runtime engine.",
+                "  runtime restart             - Restart background runtime engine.",
+                "  runtime status              - Display running status state.",
+                "  runtime metrics             - Print ASCII table of runtime health metrics.",
+                "  runtime jobs                - List active scheduled tasks in queue.",
+                "  runtime events              - List event subscribers count.",
+                "  runtime heartbeat           - Output current process health parameters.",
+                "  runtime config              - Show task intervals scheduler configuration."
             ]
         }
         
@@ -111,12 +124,12 @@ class SystemCommands:
                 if ns in self.help_namespaces:
                     print(TextFormatter.to_panel(f"Help: {ns.capitalize()}", self.help_namespaces[ns]))
                 else:
-                    raise UsageError(f"No help topic found for namespace '{ns}'. Options: {list(self.tree.keys())}")
+                    raise UsageError(f"No help topic found for namespace '{ns}'.")
             else:
                 print(TextFormatter.to_panel("Help: STONKS Interactive Shell", self.help_namespaces["general"]))
                 
         elif cmd == "version":
-            print(f"STONKS AI Trading Operating System - Version 1.0.0 (Phase 7 Terminal)")
+            print(f"STONKS AI Trading Operating System - Version 1.0.0 (Phase 8 Runtime)")
             
         elif cmd == "clear":
             os.system("cls" if os.name == "nt" else "clear")
