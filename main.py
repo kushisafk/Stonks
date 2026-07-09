@@ -3,18 +3,18 @@ import argparse
 import time
 import uvicorn
 from pathlib import Path
-from src.config.settings import settings
-from src.logging.logger import logger
-from src.agent.pipeline import trading_agent
-from src.backtesting.backtester import Backtester
-from src.scheduler.scheduler import trading_scheduler
-from src.data.market_data import market_data_service
+from stonks.config.settings import settings
+from stonks.logging.logger import logger
+from stonks.agent.pipeline import trading_agent
+from stonks.backtesting.backtester import Backtester
+from stonks.scheduler.scheduler import trading_scheduler
+from stonks.data.market_data import market_data_service
 
 def run_api_server() -> None:
     """Starts the FastAPI application using uvicorn."""
     logger.info("Starting STONKS API Server...")
     # Bind to standard port 8000
-    uvicorn.run("src.api.app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("stonks.api.app:app", host="0.0.0.0", port=8000, reload=True)
 
 def run_scheduler_mode() -> None:
     """Starts the scheduler in the foreground, blocking until interrupted."""

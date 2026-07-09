@@ -1,9 +1,9 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta
-from src.sentiment.sentiment_analyzer import SentimentAnalyzer
-from src.sentiment.sentiment_features import aggregate_sentiment_features, calculate_article_metrics
-from src.models.finbert import FinBERTModel
+from stonks.sentiment.sentiment_analyzer import SentimentAnalyzer
+from stonks.sentiment.sentiment_features import aggregate_sentiment_features, calculate_article_metrics
+from stonks.models.finbert import FinBERTModel
 import pandas as pd
 import numpy as np
 

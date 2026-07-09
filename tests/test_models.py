@@ -1,11 +1,11 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.models.base_model import BaseModel
-from src.models.lstm import LSTMModel
-from src.models.transformer import TransformerModel
-from src.models.finbert import FinBERTModel
-from src.models.model_registry import get_model_class, register_model_class, list_registered_models
+from stonks.models.base_model import BaseModel
+from stonks.models.lstm import LSTMModel
+from stonks.models.transformer import TransformerModel
+from stonks.models.finbert import FinBERTModel
+from stonks.models.model_registry import get_model_class, register_model_class, list_registered_models
 
 def test_stubs_behavior():
     """Verify that deep learning stubs produce baseline neutral prediction outputs."""
@@ -42,7 +42,7 @@ def test_model_registry_resolution():
     assert finbert_cls == FinBERTModel
     
     # Check that 'rf' resolves successfully to RandomForestModel since it is implemented
-    from src.models.random_forest import RandomForestModel
+    from stonks.models.random_forest import RandomForestModel
     rf_cls = get_model_class("rf")
     assert rf_cls == RandomForestModel
 
@@ -70,7 +70,7 @@ def test_custom_model_registration():
 
 def test_random_forest_model(tmp_path):
     """Verify RandomForestModel training, prediction, serialization, and importances."""
-    from src.models.random_forest import RandomForestModel
+    from stonks.models.random_forest import RandomForestModel
     
     X = pd.DataFrame({
         "feat1": np.random.randn(100),
@@ -122,11 +122,11 @@ def test_random_forest_model(tmp_path):
 
 def test_new_phase4_models(tmp_path):
     """Verify that all Phase 4 model wrappers train, predict, save, load, and extract importances."""
-    from src.models.extra_trees import ExtraTreesModel
-    from src.models.xgboost import XGBoostModel
-    from src.models.lightgbm import LightGBMModel
-    from src.models.catboost import CatBoostModel
-    from src.models.logistic_regression import LogisticRegressionModel
+    from stonks.models.extra_trees import ExtraTreesModel
+    from stonks.models.xgboost import XGBoostModel
+    from stonks.models.lightgbm import LightGBMModel
+    from stonks.models.catboost import CatBoostModel
+    from stonks.models.logistic_regression import LogisticRegressionModel
     
     # Create simple dummy dataset
     np.random.seed(42)

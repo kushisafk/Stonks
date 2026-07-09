@@ -1,0 +1,144 @@
+import pandas as pd
+from datetime import datetime
+from typing import Dict, Any, Optional
+from pathlib import Path
+from stonks.config.settings import settings
+from stonks.logging.logger import logger, decision_logger
+from stonks.data.market_data import market_data_service
+from stonks.features.feature_pipeline import feature_pipeline
+from stonks.models.random_forest import RandomForestModel
+from stonks.ensemble.weighted_voting import WeightedEnsemble
+from stonks.decision.decision_engine import decision_engine
+from stonks.ai_layer.explainer import RuleBasedExplainer
+from stonks.intelligence.recommendation_engine import RecommendationEngine
+
+class TradingAgent:
+    """Coordinates the end-to-end trading process: data fetch, features, training/inference, signal generation, and logging."""
+    
+    def __init__(self, model_dir: Optional[Path] = None):
+        self.model_dir = model_dir or settings.MODEL_DIR
+        self.model_dir.mkdir(parents=True, exist_ok=True)
+        self.explainer = RuleBasedExplainer()
+        self.recommendation_engine = RecommendationEngine()
+        
+    def _get_model_path(self, symbol: str, model_name: str) -> Path:
+        """Constructs a persistent model weight file path."""
+        clean_name = model_name.strip().lower()
+        if clean_name == "random_forest":
+            clean_name = "rf"
+        return self.model_dir / f"{symbol.strip().upper()}_{clean_name}.joblib"
+        
+    def run_pipeline(self, symbol: str, force_train: bool = False) -> Dict[str, Any]:
+        """
+        Runs the end-to-end stock prediction pipeline.
+        
+        Args:
+            symbol: Ticker symbol (e.g., AAPL)
+            force_train: If True, retrains the Random Forest model on historical data.
+            
+        Returns:
+            Dict[str, Any]: Consolidated prediction payload containing signal, confidence, explanation, etc.
+        """
+        symbol = symbol.strip().upper()
+        logger.info(f"TradingAgent: Running pipeline for ticker {symbol}...")
+        
+        # 1. Fetch market data (uses cache if fresh)
+        raw_df = market_data_service.fetch_data(symbol)
+        
+        # 2. Extract features for today's prediction (keeps last row!)
+        X_pred, _ = feature_pipeline.get_features(symbol, raw_df, is_training=False, use_store=True)
+        
+        if X_pred.empty:
+            raise ValueError(f"TradingAgent: Not enough historical data to calculate indicators for {symbol}.")
+            
+        # Get today's Close price and today's feature vector
+        today_close = float(raw_df.iloc[-1]["Close"])
+        today_features = X_pred.iloc[-1].to_dict()
+        X_today = X_pred.iloc[[-1]]  # Keep as dataframe of 1 row for models
+        
+        # Get active model constructor dynamically
+        from stonks.models.model_registry import get_model_class
+        active_model_name = settings.MODEL.strip().lower()
+        model_class = get_model_class(active_model_name)
+        active_model = model_class()
+        
+        model_path = self._get_model_path(symbol, active_model_name)
+        
+        # 3. Model Training or Loading
+        if force_train or not model_path.exists():
+            logger.info(f"Model file not found or force_train=True. Initiating training of {active_model_name} for {symbol}...")
+            # Fetch training dataset (nan targets and last row trimmed)
+            X_train, y_train = feature_pipeline.get_features(symbol, raw_df, is_training=True, use_store=False)
+            
+            if len(X_train) < 50:
+                raise ValueError(
+                    f"TradingAgent: Insufficient training samples ({len(X_train)}) after NaNs to train model for {symbol}."
+                )
+                
+            active_model.train(X_train, y_train)
+            active_model.save(model_path)
+        else:
+            logger.info(f"Loading trained {active_model_name} model for {symbol} from {model_path}...")
+            active_model.load(model_path)
+            
+        # 4. Assemble Weighted Ensemble
+        ensemble = WeightedEnsemble()
+        ensemble_key = "rf" if active_model_name in ("random_forest", "rf") else active_model_name
+        ensemble.register_model(ensemble_key, active_model)
+        
+        # Load and register pre-trained FinBERTModel wrapper
+        from stonks.models.finbert import FinBERTModel
+        finbert_model = FinBERTModel()
+        ensemble.register_model("finbert", finbert_model)
+        
+        # Set weights dynamically from settings configurations
+        ensemble.set_weight(ensemble_key, settings.RF_WEIGHT)
+        ensemble.set_weight("finbert", settings.FINBERT_WEIGHT)
+        
+        # 5. Predict class probability via ensemble
+        pred_prob = float(ensemble.predict_proba(X_today)[0])
+        individual_probs = {
+            name: float(probs[0]) 
+            for name, probs in ensemble.get_individual_probabilities(X_today).items()
+        }
+        
+        # 6. Translate probability to signal inside Decision Engine
+        decision = decision_engine.make_decision(pred_prob)
+        signal = decision["signal"]
+        confidence = decision["confidence"]
+        
+        # 7. Generate natural language explanation using Explainer
+        explanation = self.explainer.explain(signal, confidence, today_features)
+        
+        # 8. Persistent structured logging to Decisions CSV
+        decision_logger.log_decision(
+            ticker=symbol,
+            signal=signal,
+            confidence=confidence,
+            close_price=today_close,
+            probabilities=individual_probs
+        )
+        
+        logger.info(f"TradingAgent: Pipeline finished for {symbol} -> Signal: {signal} ({confidence:.2f})")
+        
+        # 9. Generate Trading Intelligence Recommendation
+        recommendation_payload = self.recommendation_engine.generate_recommendation(
+            ticker=symbol,
+            probability=pred_prob,
+            signal=signal,
+            features=today_features
+        )
+        
+        return {
+            "symbol": symbol,
+            "signal": signal,
+            "confidence": confidence,
+            "close_price": today_close,
+            "explanation": explanation,
+            "probabilities": individual_probs,
+            "timestamp": datetime.now().isoformat(),
+            "intelligence": recommendation_payload
+        }
+
+# Global trading agent instance
+trading_agent = TradingAgent()

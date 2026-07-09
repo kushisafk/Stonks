@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 from unittest.mock import MagicMock, patch
 from pathlib import Path
-from src.agent.pipeline import TradingAgent
+from stonks.agent.pipeline import TradingAgent
 
-@patch("src.data.market_data.market_data_service.fetch_data")
+@patch("stonks.data.market_data.market_data_service.fetch_data")
 def test_trading_agent_pipeline(mock_fetch, tmp_path):
     """Verify that TradingAgent coordinates data, training, inference, and logs successfully."""
     # Prepare dummy market data dataframe (120 days for indicator warmup and safety limits)
@@ -27,7 +27,7 @@ def test_trading_agent_pipeline(mock_fetch, tmp_path):
     
     # Configure global decisions CSV inside the temp directory
     test_csv = tmp_path / "decisions.csv"
-    from src.logging.logger import decision_logger
+    from stonks.logging.logger import decision_logger
     decision_logger.csv_path = test_csv
     decision_logger._initialize_csv()
     

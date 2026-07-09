@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from src.config.settings import Settings, settings
+from stonks.config.settings import Settings, settings
 
 def test_settings_load_defaults():
     """Verify that settings are instantiated with robust default values and folders exist."""

@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
-from src.api.app import app
+from stonks.api.app import app
 
 client = TestClient(app)
 
@@ -38,7 +38,7 @@ def test_models_endpoint():
     assert finbert_info["status"] == "STUB"
     assert finbert_info["weight"] == 0.3
 
-@patch("src.api.app.trading_agent.run_pipeline")
+@patch("stonks.api.app.trading_agent.run_pipeline")
 def test_predict_endpoint(mock_pipeline):
     """Verify that the predict ticker route successfully queries the agent and formats as DecisionResponse."""
     # Configure mock prediction payload
@@ -66,8 +66,8 @@ def test_predict_endpoint(mock_pipeline):
     assert data["close_price"] == 200.50
     assert "explanation" in data
     
-@patch("src.api.app.market_data_service.fetch_data")
-@patch("src.api.app.Backtester.run_walk_forward")
+@patch("stonks.api.app.market_data_service.fetch_data")
+@patch("stonks.api.app.Backtester.run_walk_forward")
 def test_backtest_endpoint(mock_run, mock_fetch):
     """Verify that the backtest RESEARCH route handles walk-forward requests and triggers logic."""
     # Configure mock market data and mock backtest results
@@ -109,8 +109,8 @@ def test_backtest_endpoint(mock_run, mock_fetch):
     assert data["trading_metrics"]["sharpe_ratio"] == 1.28
     assert data["trading_metrics"]["max_drawdown"] == -0.12
 
-@patch("src.data.news_data.news_collector.get_news")
-@patch("src.sentiment.sentiment_analyzer.sentiment_analyzer.analyze_batch")
+@patch("stonks.data.news_data.news_collector.get_news")
+@patch("stonks.sentiment.sentiment_analyzer.sentiment_analyzer.analyze_batch")
 def test_sentiment_endpoint(mock_analyze, mock_get_news):
     """Verify that the sentiment API route successfully retrieves, analyzes, and aggregates news sentiment."""
     # Configure mock news articles

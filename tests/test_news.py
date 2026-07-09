@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from src.data.news_data import CachedNewsCollector, MockNewsDataCollector, YFinanceNewsCollector
+from stonks.data.news_data import CachedNewsCollector, MockNewsDataCollector, YFinanceNewsCollector
 
 def test_mock_news_collector():
     """Verify that MockNewsDataCollector returns standard headline fields."""

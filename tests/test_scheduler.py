@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from src.scheduler.scheduler import TradingScheduler
+from stonks.scheduler.scheduler import TradingScheduler
 
 def test_scheduler_lifecycle():
     """Verify that start and stop lifecycle updates is_running state correctly."""
@@ -15,7 +15,7 @@ def test_scheduler_lifecycle():
     scheduler.stop()
     assert not scheduler.is_running
 
-@patch("src.scheduler.scheduler.trading_agent.run_pipeline")
+@patch("stonks.scheduler.scheduler.trading_agent.run_pipeline")
 def test_scheduler_job_execution(mock_pipeline):
     """Verify that the scheduled background job triggers run_pipeline for all configured tickers."""
     scheduler = TradingScheduler(tickers=["AAPL", "TSLA"], interval_hours=24)

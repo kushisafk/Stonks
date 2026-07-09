@@ -2,14 +2,14 @@ import pytest
 from unittest.mock import patch, MagicMock
 import pandas as pd
 import numpy as np
-from src.agent.pipeline import TradingAgent
-from src.ensemble.weighted_voting import WeightedEnsemble
-from src.models.finbert import FinBERTModel
-from src.models.random_forest import RandomForestModel
+from stonks.agent.pipeline import TradingAgent
+from stonks.ensemble.weighted_voting import WeightedEnsemble
+from stonks.models.finbert import FinBERTModel
+from stonks.models.random_forest import RandomForestModel
 
-@patch("src.agent.pipeline.market_data_service.fetch_data")
-@patch("src.data.news_data.news_collector.get_news")
-@patch("src.sentiment.sentiment_analyzer.sentiment_analyzer.analyze_batch")
+@patch("stonks.agent.pipeline.market_data_service.fetch_data")
+@patch("stonks.data.news_data.news_collector.get_news")
+@patch("stonks.sentiment.sentiment_analyzer.sentiment_analyzer.analyze_batch")
 def test_trading_agent_pipeline_with_sentiment(mock_analyze, mock_get_news, mock_fetch):
     """Verify that TradingAgent executes prediction and explanation incorporating news sentiment."""
     # 1. Mock market data: 120 days of mock prices

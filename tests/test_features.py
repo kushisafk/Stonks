@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 from unittest.mock import patch
-from src.features.technical import add_rsi, add_bollinger_bands, add_macd
-from src.features.statistical import add_rolling_skew, add_rolling_kurt
-from src.features.feature_pipeline import FeaturePipeline
+from stonks.features.technical import add_rsi, add_bollinger_bands, add_macd
+from stonks.features.statistical import add_rolling_skew, add_rolling_kurt
+from stonks.features.feature_pipeline import FeaturePipeline
 
 def test_indicators_math():
     """Verify that indicators calculate correct boundaries and relative levels."""
@@ -76,7 +76,7 @@ def test_feature_pipeline_store(tmp_path):
     assert not X_pred.isnull().any().any()
 
 
-@patch("src.data.market_data.market_data_service.fetch_data")
+@patch("stonks.data.market_data.market_data_service.fetch_data")
 def test_phase3_features_calculation(mock_fetch, tmp_path):
     """Verify that all 17 Phase 3 features are correctly calculated and index-aligned without NaNs."""
     # Create 120 days of dummy price and volume data for the stock

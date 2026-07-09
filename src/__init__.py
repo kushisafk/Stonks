@@ -1,1 +1,0 @@
-# STONKS source package

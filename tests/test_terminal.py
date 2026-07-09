@@ -1,9 +1,9 @@
 import pytest
 from pathlib import Path
-from src.terminal.parser import CommandParser
-from src.terminal.completion import TerminalCompleter
-from src.terminal.errors import ParserError, UsageError, CommandError
-from src.session.manager import TradingSessionManager
+from stonks.terminal.parser import CommandParser
+from stonks.terminal.completion import TerminalCompleter
+from stonks.terminal.errors import ParserError, UsageError, CommandError
+from stonks.session.manager import TradingSessionManager
 
 def test_command_parser():
     parser = CommandParser()
@@ -38,27 +38,27 @@ def test_completer_suggestions():
         def get_line_buffer(self):
             return self.buffer
             
-    import src.terminal.completion
-    src.terminal.completion.readline = MockReadline()
+    import stonks.terminal.completion
+    stonks.terminal.completion.readline = MockReadline()
     
     # Mock line buffer
-    src.terminal.completion.readline.buffer = "mark"
+    stonks.terminal.completion.readline.buffer = "mark"
     res = completer.complete("mark", 0)
     assert res == "market"
     
     # Subcommands completion
-    src.terminal.completion.readline.buffer = "market "
+    stonks.terminal.completion.readline.buffer = "market "
     res = completer.complete("", 0)
     assert res == "analyze"
     
-    src.completion = None  # Reset readline state representation
+    stonks.terminal.completion.readline = None  # Reset readline state representation
 
 def test_commands_execution_flow(tmp_path):
     session_file = tmp_path / "session.json"
     manager = TradingSessionManager(session_file)
     manager.create_session()
     
-    from src.terminal.commands.watchlists import WatchlistCommands
+    from stonks.terminal.commands.watchlists import WatchlistCommands
     watchlist_cmd = WatchlistCommands(manager)
     
     # Test watchlist creation execution
@@ -72,3 +72,9 @@ def test_commands_execution_flow(tmp_path):
     # Test invalid subcommand error
     with pytest.raises(CommandError):
         watchlist_cmd.execute(["invalid_action"])
+        
+    # Test portfolio cash execution
+    from stonks.terminal.commands.portfolio import PortfolioCommands
+    portfolio_cmd = PortfolioCommands(manager)
+    portfolio_cmd.execute(["cash", "50000.0"])
+    assert manager.get_portfolio().cash_balance == 50000.0

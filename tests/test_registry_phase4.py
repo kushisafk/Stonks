@@ -1,10 +1,10 @@
 import json
 import pytest
 from pathlib import Path
-from src.config.settings import settings
-from src.models.model_registry import get_model_class, get_best_model
-from src.models.xgboost import XGBoostModel
-from src.models.catboost import CatBoostModel
+from stonks.config.settings import settings
+from stonks.models.model_registry import get_model_class, get_best_model
+from stonks.models.xgboost import XGBoostModel
+from stonks.models.catboost import CatBoostModel
 
 def test_registry_get_best_model_fallback():
     """Verify that get_best_model falls back to configured default model if leaderboard doesn't exist."""
@@ -19,7 +19,7 @@ def test_registry_get_best_model_fallback():
         # Default config MODEL is random_forest
         settings.MODEL = "random_forest"
         best_model_cls = get_best_model()
-        from src.models.random_forest import RandomForestModel
+        from stonks.models.random_forest import RandomForestModel
         assert best_model_cls == RandomForestModel
         
         # Test switching to xgboost

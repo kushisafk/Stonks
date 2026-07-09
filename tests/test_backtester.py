@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.backtesting.backtester import Backtester
+from stonks.backtesting.backtester import Backtester
 
 def test_backtester_simulation():
     """Verify order execution logic, win-rate calculation, and returns under zero friction."""

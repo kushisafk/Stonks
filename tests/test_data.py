@@ -3,8 +3,8 @@ import time
 import pandas as pd
 from unittest.mock import MagicMock, patch
 from pathlib import Path
-from src.data.market_data import MarketDataService
-from src.data.news_data import MockNewsDataCollector
+from stonks.data.market_data import MarketDataService
+from stonks.data.news_data import MockNewsDataCollector
 
 @patch("yfinance.Ticker")
 def test_market_data_fetch_and_cache(mock_ticker, tmp_path):

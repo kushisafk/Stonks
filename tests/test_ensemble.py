@@ -1,8 +1,8 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.models.base_model import BaseModel
-from src.ensemble.weighted_voting import WeightedEnsemble
+from stonks.models.base_model import BaseModel
+from stonks.ensemble.weighted_voting import WeightedEnsemble
 
 # Create a simple mock model class for testing the ensemble math
 class DummyModel(BaseModel):

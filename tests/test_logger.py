@@ -1,7 +1,7 @@
 import os
 import csv
 from pathlib import Path
-from src.logging.logger import DecisionLogger, logger
+from stonks.logging.logger import DecisionLogger, logger
 
 def test_decision_logger_initialization(tmp_path):
     """Verify that the CSV log file is created with correct headers on init."""

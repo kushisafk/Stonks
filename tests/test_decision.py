@@ -1,6 +1,6 @@
 import pytest
-from src.decision.decision_engine import DecisionEngine
-from src.ai_layer.explainer import RuleBasedExplainer, LLMExplainer
+from stonks.decision.decision_engine import DecisionEngine
+from stonks.ai_layer.explainer import RuleBasedExplainer, LLMExplainer
 
 def test_decision_engine_rules():
     """Verify that predictions resolve correctly against parameterized buy/sell boundaries."""

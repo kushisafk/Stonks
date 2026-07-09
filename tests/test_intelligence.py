@@ -1,9 +1,9 @@
 import pytest
-from src.intelligence.market_reasoner import MarketReasoner
-from src.intelligence.confidence_analyzer import ConfidenceAnalyzer
-from src.intelligence.risk_assessor import RiskAssessor
-from src.intelligence.trade_planner import TradePlanner
-from src.intelligence.recommendation_engine import RecommendationEngine
+from stonks.intelligence.market_reasoner import MarketReasoner
+from stonks.intelligence.confidence_analyzer import ConfidenceAnalyzer
+from stonks.intelligence.risk_assessor import RiskAssessor
+from stonks.intelligence.trade_planner import TradePlanner
+from stonks.intelligence.recommendation_engine import RecommendationEngine
 
 def test_market_reasoner():
     reasoner = MarketReasoner()

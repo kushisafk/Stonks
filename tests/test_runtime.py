@@ -1,17 +1,17 @@
 import time
 import pytest
-from src.session.manager import TradingSessionManager
-from src.runtime.runtime import StonksRuntime
-from src.runtime.events import Event, PriceUpdateEvent, RecommendationChangedEvent, PortfolioChangedEvent
-from src.runtime.job_queue import PrioritizedJob
-from src.runtime.exceptions import WorkerPoolError, AgentRegistrationError
-from src.session.schemas import Position, PositionType, PositionStatus
+from stonks.session.manager import TradingSessionManager
+from stonks.runtime.runtime import StonksRuntime
+from stonks.runtime.events import Event, PriceUpdateEvent, RecommendationChangedEvent, PortfolioChangedEvent
+from stonks.runtime.job_queue import PrioritizedJob
+from stonks.runtime.exceptions import WorkerPoolError, AgentRegistrationError
+from stonks.session.schemas import Position, PositionType, PositionStatus
 
 class CustomTestEvent(Event):
     pass
 
 def test_event_bus():
-    from src.runtime.event_bus import EventBus
+    from stonks.runtime.event_bus import EventBus
     bus = EventBus()
     
     received = []
@@ -32,8 +32,8 @@ def test_event_bus():
     assert len(received) == 1  # Unsubscribed, so not received
 
 def test_worker_pool_priorities_and_fault_isolation():
-    from src.runtime.worker_pool import WorkerPool
-    from src.runtime.metrics import RuntimeMetrics
+    from stonks.runtime.worker_pool import WorkerPool
+    from stonks.runtime.metrics import RuntimeMetrics
     
     metrics = RuntimeMetrics()
     pool = WorkerPool(num_workers=2, metrics=metrics)
@@ -66,8 +66,8 @@ def test_worker_pool_priorities_and_fault_isolation():
     assert "B" in execution_order
 
 def test_scheduler_loop():
-    from src.runtime.worker_pool import WorkerPool
-    from src.runtime.scheduler import RuntimeScheduler
+    from stonks.runtime.worker_pool import WorkerPool
+    from stonks.runtime.scheduler import RuntimeScheduler
     
     pool = WorkerPool(num_workers=1)
     pool.start()

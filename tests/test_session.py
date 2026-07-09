@@ -1,9 +1,9 @@
 import pytest
 import json
 from pathlib import Path
-from src.session.manager import TradingSessionManager
-from src.session.schemas import TradingStyle, RiskProfile, DecisionRecord, Alert
-from src.session.exceptions import InvalidStateError, PositionNotFoundError, WatchlistNotFoundError
+from stonks.session.manager import TradingSessionManager
+from stonks.session.schemas import TradingStyle, RiskProfile, DecisionRecord, Alert
+from stonks.session.exceptions import InvalidStateError, PositionNotFoundError, WatchlistNotFoundError
 
 def test_session_lifecycle_and_persistence(tmp_path):
     session_file = tmp_path / "session.json"
@@ -63,6 +63,7 @@ def test_positions_and_portfolio_auto_math(tmp_path):
     session_file = tmp_path / "session.json"
     manager = TradingSessionManager(session_file)
     manager.create_session()
+    manager.set_cash_balance(100000.0)
     
     port = manager.get_portfolio()
     assert port.cash_balance == 100000.0
