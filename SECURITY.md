@@ -26,6 +26,6 @@ Only the current main release candidate is actively supported with security patc
 ## 3. Responsible Disclosure
 
 If you discover a security vulnerability or security bug, please report it responsibly:
-* **Private Report**: Do NOT create a public GitHub Issue. Instead, email a private report detailing the vulnerability to the project owner at `krish@stonks-project.org` (placeholder).
+* **Private Report**: Do NOT create a public GitHub Issue. Instead, email a private report detailing the vulnerability to the project owner at `kushalsaha789@gmail.com`.
 * **Details to Include**: A clear description of the vulnerability, step-by-step instructions to reproduce the issue, and potential impacts.
 * **Resolution Window**: We aim to acknowledge reports within 48 hours and provide a resolution within 14 days.
