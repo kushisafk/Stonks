@@ -5,6 +5,65 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
 from stonks.config.settings import settings
+import sys
+
+class TerminalStreamHandler(logging.StreamHandler):
+    """A stream handler that safely prints log messages without breaking the readline input buffer."""
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            stream = self.stream
+            
+            try:
+                import readline
+            except ImportError:
+                readline = None
+                
+            if readline and hasattr(readline, "get_line_buffer") and hasattr(readline, "redisplay"):
+                current_line = readline.get_line_buffer()
+                
+                # Clear current line and write message
+                stream.write("\r\033[K")
+                stream.write(msg + self.terminator)
+                
+                # Redisplay the prompt and user typed text
+                prompt = "\033[1m\033[96mstonks> \033[0m"
+                stream.write(prompt + current_line)
+                stream.flush()
+                
+                # Update pyreadline prompt position on Windows console
+                if hasattr(readline, "rl") and hasattr(readline.rl, "_update_prompt_pos"):
+                    try:
+                        readline.rl._update_prompt_pos()
+                    except Exception:
+                        pass
+                
+                # Tell readline to redraw its buffer
+                readline.redisplay()
+            else:
+                super().emit(record)
+        except Exception:
+            self.handleError(record)
+
+class ConsoleLogFilter(logging.Filter):
+    """Filters out routine INFO execution logs from the terminal screen to keep it clean."""
+    def filter(self, record: logging.LogRecord) -> bool:
+        if record.levelno > logging.INFO:
+            return True  # Always show WARNING, ERROR, and CRITICAL logs to the user
+            
+        msg = record.getMessage()
+        blocked_keywords = [
+            # Pipeline execution keywords
+            "TradingAgent:", "Cache hit:", "Cache miss/refresh:", "Successfully cached",
+            "Feature Store", "Phase 3 Features", "Computing features", "Live Prediction:",
+            "FinBERT:", "RandomForestModel", "Registered model", "Set ensemble weight",
+            "Decision Engine:", "CSV log entry", "Model Registry:", "Loading trained",
+            "Model file not found", "Prepared prediction dataset"
+        ]
+        for keyword in blocked_keywords:
+            if keyword in msg:
+                return False
+        return True
 
 def setup_logging():
     """Configures application-wide logging to console and app.log file."""
@@ -25,10 +84,15 @@ def setup_logging():
         format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[
-            logging.StreamHandler(),
+            TerminalStreamHandler(),
             logging.FileHandler(log_file, encoding="utf-8")
         ]
     )
+    
+    # Add ConsoleLogFilter to console StreamHandler specifically to ignore noisy pipeline logs
+    for handler in logging.getLogger().handlers:
+        if isinstance(handler, logging.StreamHandler) and not isinstance(handler, logging.FileHandler):
+            handler.addFilter(ConsoleLogFilter())
     
     # Mute noisy third-party loggers on console StreamHandler
     logging.getLogger("urllib3").setLevel(logging.WARNING)

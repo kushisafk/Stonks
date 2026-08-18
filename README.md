@@ -1,27 +1,17 @@
 # 📈 STONKS: The AI Trading Operating System
 
-[![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg?style=flat-square)](https://www.python.org/)
-[![Software Version](https://img.shields.io/badge/version-1.0.0--rc1-green.svg?style=flat-square)](https://github.com/krish/stonks/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
+[![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Version](https://img.shields.io/badge/version-v1.0.0--rc1-007EC6?style=flat-square)](https://github.com/kushisafk/stonks/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000?style=flat-square)](https://github.com/psf/black)
+[![Models: CatBoost](https://img.shields.io/badge/ML%20Models-CatBoost%20%7C%20XGBoost-ff6f00?style=flat-square&logo=scikitlearn&logoColor=white)](https://catboost.ai/)
+[![NLP: FinBERT](https://img.shields.io/badge/NLP-FinBERT-yellow?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/ProsusAI/finbert)
+[![OS: Event--Driven](https://img.shields.io/badge/OS-Event--Driven%20Runtime-blueviolet?style=flat-square&logo=linux&logoColor=white)](#)
 
 > [!IMPORTANT]
 > **STONKS is a persistent, multi-threaded event-driven AI operating system designed to run calibrated ML predictions, news NLP indexing, mock portfolios, and background analysis schedulers.**
 
----
-
-## 📸 Interface Preview
-
-```
-  Placeholder: Terminal Demo Session (GIF)
-  [===============================================================]
-  [  stonks> market analyze NVDA                                  ]
-  [  [Consensus: BUY (78.2% Calibrated Probability)]               ]
-  [  stonks> position open long NVDA 50                           ]
-  [  [✓] Position Opened: 50 NVDA @ $122.40                       ]
-  [===============================================================]
-```
-![Terminal Demo Placeholder](docs/images/terminal_demo.gif)
+![STONKS Interactive Terminal Demo](docs/images/demo.gif)
 
 ---
 
@@ -276,17 +266,23 @@ stonks> runtime status
 
 ## 🔮 Roadmap
 
-### v1.1.0: Deep Sequence Classifiers
+### v1.1: Multi-Market
+* US & Indian stocks, Indian ETFs, Asset Registry.
+* Custom asset additions + per-asset CatBoost model training.
+
+### v1.2: Better Models
 * LSTM, GRU, and 1D Temporal Convolutional Networks (TCN) models.
 * Benchmarking sequence deep models against tree models.
 
-### v1.2.0: Attention & Foundation Models
-* Vanilla Time-Series Transformers and Informer/PatchTST setups.
-* Fine-tuning pre-trained time-series foundation weights (TimesFM).
+### v1.3: Advanced Intelligence
+* Time-Series Transformers (Informer, PatchTST).
+* Tabular-sequence stacked hybrid ensembles and advanced market context features.
 
-### v1.3.0: Hybrid Ensembles & Integrations
-* Stacked meta-classifiers combining CatBoost and Attention predictors.
-* Alpaca/IB mock paper trading API connections.
+### v1.4: Trading Simulation
+* Paper trading sandbox, portfolio performance metrics tracking, and advanced volatility sizing.
+
+### Later
+* Live broker integration, Telegram/Discord notifications, and React web dashboards.
 
 ---
 

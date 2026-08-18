@@ -53,8 +53,9 @@ class MarketCommands:
                 raise UsageError("Usage: market explain <ticker>")
             ticker = args[1].upper()
             res = trading_agent.run_pipeline(ticker, force_train=False)
-            print(f"\n{TextFormatter.bold('Explanation for ' + ticker)}")
-            print(res["explanation"])
+            import textwrap
+            wrapped_explanation = textwrap.wrap(res["explanation"], width=74)
+            print(TextFormatter.to_panel(f"Explanation: {ticker}", wrapped_explanation))
             
         elif subcmd == "news":
             if len(args) < 2:
